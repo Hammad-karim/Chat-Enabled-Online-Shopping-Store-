@@ -27,6 +27,14 @@ import { stripeWebhook } from "./controllers/order.controller.js";
 import adminRouter from "./routes/admin.route.js";
 import chatRouter from "./routes/chat.route.js";
 
+// root health check
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    message: "API is running",
+  });
+});
+
 app.use("/api/user", userRouter);
 app.use("/api/seller", sellerRouter);
 app.use("/api/product", productRouter);
@@ -36,3 +44,11 @@ app.use("/api/order", orderRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/chat", chatRouter);
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhook);
+
+// explicit 404 for unmatched routes
+app.use((req, res) => {
+  res.status(404).json({
+    status: "fail",
+    message: "Route not found",
+  });
+});
